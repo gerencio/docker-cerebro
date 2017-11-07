@@ -21,5 +21,14 @@ RUN cd /opt/ \
     && mv cerebro-${CEREBRO_VERSION} cerebro
 
 WORKDIR /opt/cerebro
+
+ADD application.conf .
+ADD start.sh ./bin
+
+RUN chmod a+x ./bin/start.sh
+
 EXPOSE 9000
+
+ENTRYPOINT [ "./bin/start.sh" ]
+
 CMD ["./bin/cerebro"]

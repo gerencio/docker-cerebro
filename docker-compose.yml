@@ -4,22 +4,24 @@ services:
   # Cerebro Elasticsearch client
   cerebro:
     build: .
-
-    # Instead of building the image locally,  can use:
-    # image: yannart/cerebro:latest
-
+    environment:
+      - APP_SECRET="00oUafDtILqSFOhcpb8Zye4aU8Z7kGA9"
+      - APP_URL=http://elasticsearch:9200
+      - APP_NAME=teste
+      - APP_USERNAME=teste
+      - APP_PASSWORD=1234
     ports:
       - "9000:9000"
+    links:
+      - elasticsearch:elasticsearch
     networks:
       - app_net
-
   # Elasticsearch cluster
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:5.5.1
+    image: gerencio/elasticsearch:5.6.2-rev2
     environment:
-      - cluster.name=es-cluster
-      - node.name=es1
-      - bootstrap.memory_lock=true
+      - DISCOVER_HTTP_IP=eth0
+      - DISCOVER_TRANSPORT_IP=eth0
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ulimits:
       memlock:
@@ -31,26 +33,6 @@ services:
       - "9300:9300"
     networks:
       - app_net
-
-  elasticsearch2:
-    image: docker.elastic.co/elasticsearch/elasticsearch:5.5.1
-    environment:
-      - cluster.name=es-cluster
-      - node.name=es2
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "discovery.zen.ping.unicast.hosts=elasticsearch"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    mem_limit: 1g
-    ports:
-      - "9201:9200"
-      - "9301:9300"
-    networks:
-      - app_net
-
 networks:
   app_net:
     driver: bridge
